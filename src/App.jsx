@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 
 function App() {
@@ -6,6 +6,9 @@ function App() {
   const[password,setPassword]=useState("") 
  const[numAllowed,setNumAllowed]=useState(false)
  const[charAllowed,setCharAllowed]=useState(false)
+ const [copy,setCopy]=useState("Copy")
+
+ const passwordRef=useRef(null)
 
  const PasswordGenerator=useCallback(()=>{
   let pass="";
@@ -21,21 +24,31 @@ function App() {
   setPassword(pass)
 },[length,numAllowed,charAllowed,setPassword])
 
+const CopyPassword =()=>{
+  passwordRef.current?.select();
+  window.navigator.clipboard.writeText(password);
+  setCopy("Copied")
+  setTimeout(() => {
+    setCopy("Copy");
+  }, 1500);
+}
+
 useEffect(()=>{PasswordGenerator()},
 [numAllowed,length,charAllowed,PasswordGenerator])
 
   return (
-   <div className="w-2/5 mx-auto mt-32 bg-slate-500 py-10 px-16 rounded-xl">
+   <div className="w-2/5 mx-auto mt-32 bg-slate-400 py-10 px-16 rounded-xl">
    <div className="flex flex-col gap-10">
    <h1 className="text-center text-orange-500 font-semibold text-4xl">Password Generator</h1>
     <div className="w-full flex">
       <input  type="text" 
        className='outline-none w-full py-1 px-4' 
        value={password}
+       ref={passwordRef}
        placeholder="password"
        readOnly
         />
-      <button className="bg-red-500 px-3 ">copy</button>
+      <button className="bg-sky-500 px-3 text-gray-100 font-semibold" onClick={CopyPassword}>{copy}</button>
     </div>
     <div className="flex justify-between">
       <div className="flex gap-2">
